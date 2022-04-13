@@ -19,7 +19,7 @@
   "content_scripts": [
     {
       "run_at": "document_start",
-      "matches": ["https://github.com/*"],
+      "matches": ["https://dev.sankuai.com/code/repo-detail/*", "https://github.com/*"],
       "js": ["content.js"],
       "css": ["content.css"]
     }

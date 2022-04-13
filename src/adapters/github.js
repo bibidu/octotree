@@ -3,17 +3,23 @@
 // However, that <main> element doesn't have "id" attribute if the Github page loads at specific
 // File e.g. https://github.com/jquery/jquery/blob/master/.editorconfig.
 // Therefore, the below selector uses many path but only points to the same <main> element
-const GH_PJAX_CONTAINER_SEL =
-  '#js-repo-pjax-container, div[itemtype="http://schema.org/SoftwareSourceCode"] main, [data-pjax-container]';
-
-const GH_CONTAINERS = '.container, .container-lg, .container-responsive';
-const GH_MAX_HUGE_REPOS_SIZE = 50;
-const GH_HIDDEN_RESPONSIVE_CLASS = '.d-none';
-const GH_RESPONSIVE_BREAKPOINT = 1010;
 
 class GitHub extends PjaxAdapter {
   constructor() {
+    const GH_PJAX_CONTAINER_SEL = '#js-repo-pjax-container, div[itemtype="http://schema.org/SoftwareSourceCode"] main, [data-pjax-container]';
+
+    const GH_CONTAINERS = '.container, .container-lg, .container-responsive';
+    const GH_MAX_HUGE_REPOS_SIZE = 50;
+    const GH_HIDDEN_RESPONSIVE_CLASS = '.d-none';
+    const GH_RESPONSIVE_BREAKPOINT = 1010;
     super(GH_PJAX_CONTAINER_SEL);
+
+    this.config = {
+      GH_CONTAINERS,
+      GH_MAX_HUGE_REPOS_SIZE,
+      GH_HIDDEN_RESPONSIVE_CLASS,
+      GH_RESPONSIVE_BREAKPOINT,
+    }
   }
 
   // @override
@@ -41,6 +47,12 @@ class GitHub extends PjaxAdapter {
   // @override
   getCssClass() {
     return 'octotree-github-sidebar';
+  }
+
+  getCurrentPath(path) {
+    const match = path.match(/(?:[^\/]+\/){4}(.*)/);
+    if (!match) return;
+    return match[1];
   }
 
   // @override
@@ -78,9 +90,9 @@ class GitHub extends PjaxAdapter {
   updateLayout(sidebarPinned, sidebarVisible, sidebarWidth) {
     const SPACING = 20;
     const $containers =
-      $('html').width() <= GH_RESPONSIVE_BREAKPOINT
-        ? $(GH_CONTAINERS).not(GH_HIDDEN_RESPONSIVE_CLASS)
-        : $(GH_CONTAINERS);
+      $('html').width() <= this.config.GH_RESPONSIVE_BREAKPOINT
+        ? $(this.config.GH_CONTAINERS).not(this.config.GH_HIDDEN_RESPONSIVE_CLASS)
+        : $(this.config.GH_CONTAINERS);
 
     const shouldPushEverything = sidebarPinned && sidebarVisible;
 
@@ -334,7 +346,7 @@ class GitHub extends PjaxAdapter {
               const repos = Object.keys(hugeRepos).filter((hugeRepoKey) => isValidTimeStamp(hugeRepos[hugeRepoKey]));
               if (!hugeRepos[repo]) {
                 // If there are too many repos memoized, delete the oldest one
-                if (repos.length >= GH_MAX_HUGE_REPOS_SIZE) {
+                if (repos.length >= this.config.GH_MAX_HUGE_REPOS_SIZE) {
                   const oldestRepo = repos.reduce((min, p) => (hugeRepos[p] < hugeRepos[min] ? p : min));
                   delete hugeRepos[oldestRepo];
                 }

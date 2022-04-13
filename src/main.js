@@ -1,5 +1,7 @@
 $(document).ready(() => {
-  octotree.load(loadExtension);
+  setTimeout(() => {
+    octotree.load(loadExtension);
+  }, 0);
 
   async function loadExtension(activationOpts = {}) {
     const $html = $('html');
@@ -10,7 +12,28 @@ $(document).ready(() => {
     const $views = $sidebar.find('.octotree-view');
     const $spinner = $sidebar.find('.octotree-spin');
     const $pinner = $sidebar.find('.octotree-pin');
-    const adapter = new GitHub();
+
+    let octotreeType
+    try {
+      const customOctotree = document.querySelector('script.custom_octotree');
+      if (customOctotree) {
+        octotreeType = JSON.parse(customOctotree.textContent).type;
+      }
+    } catch (error) {
+      octotreeType = 'GitHub'
+    }
+    
+    let adapter
+    switch(octotreeType) {
+      case 'GitHub':
+        adapter = new GitHub();
+        break;
+      case 'MT':
+        adapter = new MT();
+        break;
+      default:
+        adapter = new GitHub();
+    }
     const treeView = new TreeView($dom, adapter);
     const optsView = new OptionsView($dom, adapter);
     const helpPopup = new HelpPopup($dom);

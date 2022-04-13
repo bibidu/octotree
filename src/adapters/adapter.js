@@ -362,6 +362,9 @@ class Adapter {
    * @api protected
    */
   _getItemHref(repo, type, encodedPath, encodedBranch) {
+    if (this.getItemHref) {
+      return this.getItemHref(repo, type, encodedPath, encodedBranch);
+    }
     return `/${repo.username}/${repo.reponame}/${type}/${encodedBranch}/${encodedPath}`;
   }
   /**

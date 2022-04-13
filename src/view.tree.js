@@ -152,10 +152,8 @@ class TreeView {
 
     // Convert /username/reponame/object_type/branch/path to path
     const path = decodeURIComponent(location.pathname);
-    const match = path.match(/(?:[^\/]+\/){4}(.*)/);
-    if (!match) return;
-
-    const currentPath = match[1];
+    const currentPath = this.adapter.getCurrentPath(path);
+    
     const loadAll = await this.adapter.shouldLoadEntireTree(repo);
 
     selectPath(loadAll ? [currentPath] : breakPath(currentPath));
