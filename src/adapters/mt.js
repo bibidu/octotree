@@ -13,6 +13,19 @@ const GH_RESPONSIVE_BREAKPOINT = 1010
 class MT extends PjaxAdapter {
   constructor() {
     super(GH_PJAX_CONTAINER_SEL)
+    const onLayoutChange = () => {
+      const sidebar = document.querySelector('.octotree-sidebar')
+      if (!sidebar) {
+        return setTimeout(onLayoutChange, 500)
+      }
+      const octotreeWidth = getComputedStyle(sidebar).width
+      document.documentElement.style['min-width'] = '0px'
+      document.documentElement.style['width'] = 'auto'
+      document.body.style['min-width'] = '0px'
+      document.body.style['width'] = `calc(100vw - ${octotreeWidth})`
+    }
+    window.addEventListener('resize', onLayoutChange)
+    onLayoutChange()
   }
 
   // @override
@@ -774,7 +787,10 @@ class MT extends PjaxAdapter {
                           <span class="mtd-picker-values"
                             ><div class="selected-container" style="display: flex;padding-left: 10px;font-weight: normal;">
                               <i class="iconfont devtools-branches"></i
-                              ><span class="selected-display-text" style="margin-left: 4px;">${branch.replace(/^refs\/heads\//, '')}</span
+                              ><span class="selected-display-text" style="margin-left: 4px;">${branch.replace(
+                                /^refs\/heads\//,
+                                ''
+                              )}</span
                               >
                             </div></span
                           >
