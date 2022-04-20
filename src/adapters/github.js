@@ -8,7 +8,7 @@ class GitHub extends PjaxAdapter {
   constructor() {
     const GH_PJAX_CONTAINER_SEL = '#js-repo-pjax-container, div[itemtype="http://schema.org/SoftwareSourceCode"] main, [data-pjax-container]';
 
-    const GH_CONTAINERS = '.container, .container-lg, .container-responsive';
+    const GH_CONTAINERS = 'body';
     const GH_MAX_HUGE_REPOS_SIZE = 50;
     const GH_HIDDEN_RESPONSIVE_CLASS = '.d-none';
     const GH_RESPONSIVE_BREAKPOINT = 1010;
